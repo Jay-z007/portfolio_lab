@@ -5,208 +5,158 @@ const messagesBox = document.getElementById("chatMessages");
 const statusText = document.getElementById("chatStatus");
 const sendButton = document.getElementById("chatSend");
 
-// Portfolio knowledge base
-
-const portfolioPrompt = `
-You are the personal portfolio assistant for JAYz.
-
-Help visitors learn about JAYz's skills and projects.
-
-SKILLS:
-- Python
-- UI/UX Design
-- JavaScript
-- HTML
-- CSS
-
-PROJECTS:
-
-1. Fibonacci Series
-Purpose: Generates the Fibonacci sequence starting from 0 and 1.
-GitHub: https://github.com/Jay-z007/python_basics_25bcon0692_fibionacci
-
-2. Factorial
-Purpose: Calculates the factorial of a number.
-GitHub: https://github.com/Jay-z007/python-basics-25bcon0692-factorial
-
-3. Struct to Dict
-Purpose: Converts a struct into a dictionary.
-GitHub: https://github.com/Jay-z007/python_basics_25bcon0692_struct_to_dict
-
-4. Reading List
-Purpose: A list of books JAYz has read.
-GitHub: https://github.com/Jay-z007/readinglist2
-
-5. Quiz Game
-Purpose: Tests the user's knowledge of a subject.
-GitHub: https://github.com/Jay-z007/quiz
-
-6. Messy
-Purpose: A website that helps users calculate their marks.
-GitHub: https://github.com/Jay-z007/messy
-
-7. Bug Fixing
-Purpose: A project focused on fixing bugs in code.
-GitHub: https://github.com/Jay-z007/bug_fixing
-
-RESPONSE FORMATTING RULES:
-- Use plain text, not Markdown tables.
-- Do not use Markdown table separators such as |---|---|.
-- Avoid Markdown headings using # symbols.
-- For project lists, use numbered lists with short descriptions.
-- Put each GitHub URL on its own line.
-- Answer in a natural, conversational tone.
-- Keep answers concise and easy to read.
-- Never invent project features or personal details.
-- If information is missing, say it is not specified.
-`;
-
-
-// Keep the conversation in memory while this page is open.
-const conversationHistory = [];
-
 const MAX_HISTORY_MESSAGES = 20;
+const API_ENDPOINT = "/api/chat";
+
+const conversationHistory = [];
 let isSending = false;
 
-
+// Display a message in the chat window.
 function showMessage(text, kind) {
-    const p = document.createElement("p");
-    p.className =
-      kind === "user" ? "user-message" : "bot-message";
-  
-    if (kind === "user") {
-      p.textContent = text;
-    } else {
-      // Render a small, safe subset of Markdown.
-      // Only plain text and HTTP(S) links are allowed.
-      const lines = text.split(/\n+/);
-  
-      function appendFormattedText(parent, content) {
-        const pattern =
-          /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s<]+)/g;
-  
-        let lastIndex = 0;
-        let match;
-  
-        while ((match = pattern.exec(content)) !== null) {
-          parent.appendChild(
-            document.createTextNode(content.slice(lastIndex, match.index))
-          );
-  
-          const isMarkdownLink = Boolean(match[1]);
-          const url = isMarkdownLink ? match[2] : match[3];
-          const label = isMarkdownLink ? match[1] : url;
-  
-          // Remove trailing punctuation from plain URLs.
-          let cleanUrl = url;
-          if (!isMarkdownLink) {
-            const trailing = cleanUrl.match(/[.,!?;:]+$/);
-            if (trailing) cleanUrl = cleanUrl.slice(0, -trailing[0].length);
-          }
-  
-          if (cleanUrl) {
+  const message = document.createElement("p");
+  message.className =
+    kind === "user" ? "user-message" : "bot-message";
+
+  if (kind === "user") {
+    message.textContent = text;
+  } else {
+    renderBotMessage(message, text);
+  }
+
+  messagesBox.appendChild(message);
+  messagesBox.scrollTop = messagesBox.scrollHeight;
+}
+
+// Safely render plain text, numbered lists, bold text,
+// and clickable HTTP/HTTPS links without inserting HTML.
+function renderBotMessage(container, text) {
+  const lines = text.split(/\r?\n/);
+
+  function appendFormattedText(parent, content) {
+    const pattern =
+      /\*\*(.+?)\*\*|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s<]+)/g;
+
+    let lastIndex = 0;
+    let match;
+
+    while ((match = pattern.exec(content)) !== null) {
+      parent.appendChild(
+        document.createTextNode(
+          content.slice(lastIndex, match.index)
+        )
+      );
+
+      if (match[1]) {
+        // Bold text: **example**
+        const strong = document.createElement("strong");
+        strong.textContent = match[1];
+        parent.appendChild(strong);
+      } else {
+        const isMarkdownLink = Boolean(match[2]);
+        let url = isMarkdownLink ? match[3] : match[4];
+        const label = isMarkdownLink ? match[2] : url;
+
+        // Remove trailing punctuation from ordinary URLs.
+        if (!isMarkdownLink) {
+          url = url.replace(/[.,!?;:]+$/, "");
+        }
+
+        try {
+          const parsedUrl = new URL(url);
+
+          if (
+            parsedUrl.protocol === "https:" ||
+            parsedUrl.protocol === "http:"
+          ) {
             const link = document.createElement("a");
-            link.href = cleanUrl;
-            link.textContent = isMarkdownLink ? label : cleanUrl;
+            link.href = parsedUrl.href;
+            link.textContent = label;
             link.target = "_blank";
             link.rel = "noopener noreferrer";
             parent.appendChild(link);
-          }
-  
-          if (!isMarkdownLink && cleanUrl.length < url.length) {
-            parent.appendChild(
-              document.createTextNode(url.slice(cleanUrl.length))
-            );
-          }
-  
-          lastIndex = pattern.lastIndex;
-        }
-  
-        parent.appendChild(
-          document.createTextNode(content.slice(lastIndex))
-        );
-      }
-  
-      lines.forEach((line) => {
-        const trimmed = line.trim();
-        if (!trimmed) return;
-  
-        const lineElement = document.createElement("div");
-        lineElement.className = "bot-line";
-  
-        // Support simple numbered and bulleted lists.
-        const itemMatch = trimmed.match(
-          /^(?:[-*]\s+|\d+[.)]\s+)/
-        );
-  
-        let content = itemMatch
-          ? trimmed.slice(itemMatch[0].length)
-          : trimmed;
-  
-        // Support bold text using **text**.
-        const parts = content.split(/(\*\*[^*]+\*\*)/g);
-  
-        parts.forEach((part) => {
-          const boldMatch = part.match(/^\*\*(.+)\*\*$/);
-  
-          if (boldMatch) {
-            const strong = document.createElement("strong");
-            appendFormattedText(strong, boldMatch[1]);
-            lineElement.appendChild(strong);
           } else {
-            appendFormattedText(lineElement, part);
+            parent.appendChild(document.createTextNode(label));
           }
-        });
-  
-        if (itemMatch) {
-          lineElement.classList.add("bot-list-item");
-          lineElement.style.marginLeft = "12px";
+        } catch {
+          parent.appendChild(document.createTextNode(label));
         }
-  
-        p.appendChild(lineElement);
-      });
+
+        if (!isMarkdownLink && url.length < match[4].length) {
+          parent.appendChild(
+            document.createTextNode(match[4].slice(url.length))
+          );
+        }
+      }
+
+      lastIndex = pattern.lastIndex;
     }
-  
-    messagesBox.appendChild(p);
-    messagesBox.scrollTop = messagesBox.scrollHeight;
+
+    parent.appendChild(
+      document.createTextNode(content.slice(lastIndex))
+    );
   }
-  
+
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+
+    if (!trimmed) return;
+
+    const lineElement = document.createElement("div");
+    lineElement.className = "bot-line";
+
+    // Support numbered lists and bullet points.
+    const listMatch = trimmed.match(
+      /^(?:[-*]\s+|\d+[.)]\s+)/
+    );
+
+    const content = listMatch
+      ? trimmed.slice(listMatch[0].length)
+      : trimmed;
+
+    if (listMatch) {
+      lineElement.classList.add("bot-list-item");
+    }
+
+    appendFormattedText(lineElement, content);
+    container.appendChild(lineElement);
+  });
+
+  if (!container.childNodes.length) {
+    container.textContent = text;
+  }
+}
 
 function setStatus(message) {
   statusText.textContent = message;
 }
 
-function getConfig() {
-  // Supports window.CONFIG from config.js.
-  if (!window.CONFIG) {
-    throw new Error(
-      "Configuration not found. Check config.js and script order."
-    );
-  }
-
-  if (
-    !window.CONFIG.apiKey ||
-    !window.CONFIG.baseUrl ||
-    !window.CONFIG.model
-  ) {
-    throw new Error(
-      "Configuration is incomplete. Check config.js."
-    );
-  }
-
-  if (
-    window.CONFIG.apiKey === "YOUR_REAL_GROQ_API_KEY" ||
-    window.CONFIG.apiKey === "PASTE_YOUR_GROQ_API_KEY_HERE"
-  ) {
-    throw new Error("Add your Groq API key in config.js.");
-  }
-
-  return window.CONFIG;
+function setSendingState(sending) {
+  isSending = sending;
+  sendButton.disabled = sending;
+  input.disabled = sending;
 }
 
+function trimHistory() {
+  if (conversationHistory.length > MAX_HISTORY_MESSAGES) {
+    conversationHistory.splice(
+      0,
+      conversationHistory.length - MAX_HISTORY_MESSAGES
+    );
+  }
+
+  // Ensure history starts with a user message.
+  while (
+    conversationHistory.length > 0 &&
+    conversationHistory[0].role !== "user"
+  ) {
+    conversationHistory.shift();
+  }
+}
+
+// Submit a question to the Vercel backend.
 if (!form || !input || !messagesBox || !statusText || !sendButton) {
   console.error(
-    "Chatbot initialization failed: one or more HTML elements are missing."
+    "Chatbot initialization failed: check the HTML element IDs."
   );
 } else {
   form.addEventListener("submit", async (event) => {
@@ -222,135 +172,81 @@ if (!form || !input || !messagesBox || !statusText || !sendButton) {
       return;
     }
 
-    let config;
-
-    try {
-      config = getConfig();
-    } catch (error) {
-      setStatus(error.message);
-      console.error("Chatbot configuration error:", error);
-      return;
-    }
-
-    isSending = true;
-    sendButton.disabled = true;
-    input.disabled = true;
-
     showMessage(question, "user");
     input.value = "";
+
+    setSendingState(true);
     setStatus("Thinking...");
 
-    // Add the current question to a temporary request history.
-    const pendingHistory = [
+    // Include previous successful messages and the new question.
+    const requestHistory = [
       ...conversationHistory,
       { role: "user", content: question }
-    ];
-
-    // Keep only the most recent messages.
-    const recentHistory = pendingHistory.slice(
-      -MAX_HISTORY_MESSAGES
-    );
+    ].slice(-MAX_HISTORY_MESSAGES);
 
     try {
-      const baseUrl = config.baseUrl.replace(/\/+$/, "");
+      const response = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          messages: requestHistory
+        })
+      });
 
-      const response = await fetch(
-        `${baseUrl}/chat/completions`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${config.apiKey}`
-          },
-          body: JSON.stringify({
-            model: config.model,
-            temperature: 0.5,
-            messages: [
-              {
-                role: "system",
-                content: portfolioPrompt
-              },
-              ...recentHistory
-            ]
-          })
-        }
-      );
-
-      // Read the response body once.
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const apiMessage =
-          data?.error?.message ||
-          `Request failed with HTTP ${response.status}.`;
-
-        if (response.status === 401) {
+        if (response.status === 404) {
           throw new Error(
-            "Authentication failed. Check your Groq API key."
+            "Chat endpoint not found. Check that api/chat.js is deployed."
           );
         }
 
         if (response.status === 429) {
           throw new Error(
-            "Rate limit or quota reached. Please wait and try again."
+            "Too many requests. Please wait and try again."
           );
         }
 
-        if (response.status === 404) {
-          throw new Error(
-            "The requested model or endpoint was not found. Check config.js."
-          );
-        }
-
-        throw new Error(apiMessage);
+        throw new Error(
+          data.error ||
+          `Request failed with HTTP ${response.status}.`
+        );
       }
 
-      const answer =
-        data?.choices?.[0]?.message?.content?.trim();
-
-      if (!answer) {
-        throw new Error("The AI returned an empty response.");
+      if (typeof data.answer !== "string" || !data.answer.trim()) {
+        throw new Error("The server returned an empty response.");
       }
+
+      const answer = data.answer.trim();
 
       showMessage(answer, "bot");
 
-      // Save both messages only after a successful response.
+      // Save the conversation only after a successful response.
       conversationHistory.push(
         { role: "user", content: question },
         { role: "assistant", content: answer }
       );
 
-      // Bound the saved history.
-      if (
-        conversationHistory.length > MAX_HISTORY_MESSAGES
-      ) {
-        conversationHistory.splice(
-          0,
-          conversationHistory.length - MAX_HISTORY_MESSAGES
-        );
-      }
-
+      trimHistory();
       setStatus("");
 
     } catch (error) {
-      console.error("Chatbot request error:", error);
+      console.error("Portfolio chatbot error:", error);
 
-      if (
-        error instanceof TypeError &&
-        /fetch/i.test(error.message)
-      ) {
+      if (error instanceof TypeError) {
         setStatus(
-          "Network request failed. Check your connection or browser Console."
+          "Unable to reach the chatbot server. Check your connection and deployment."
         );
       } else {
         setStatus("Chat unavailable: " + error.message);
       }
-
     } finally {
-      isSending = false;
-      sendButton.disabled = false;
-      input.disabled = false;
+      setSendingState(false);
       input.focus();
+      messagesBox.scrollTop = messagesBox.scrollHeight;
     }
   });
 }
