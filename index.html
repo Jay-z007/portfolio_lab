@@ -1,81 +1,471 @@
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JAYz — Personal Profile</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <p class="eyebrow">Personal Profile</p>
-      <h1>JAYz</h1>
-      <p class="tagline">JAYz Role or short headline</p>
-    </header>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <main>
-      <section class="card" id="about" aria-labelledby="about-heading">
-        <h2 id="about-heading">About</h2>
-        <p>
-          Hello, I am JAYz. JAYz short biography
-          describing your background, interests, and what you like to work on.
+  <meta name="theme-color" content="#eef3f9">
+  <meta name="description" content="JAYz's developer portfolio featuring programming projects, technical skills, and web development.">
+
+  <title>JAYz — Developer Portfolio</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="chatbot.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="top-nav" aria-label="Main navigation">
+      <a href="#home" class="brand">JAY<span>z</span>.</a>
+
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#portfolio-chatbot">AI Assistant</a>
+      </div>
+
+      <button
+        id="themeToggle"
+        class="theme-toggle"
+        type="button"
+        aria-label="Switch to dark mode"
+      >
+        <span aria-hidden="true">☾</span>
+        <span class="theme-label">Dark mode</span>
+      </button>
+    </nav>
+
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <p class="eyebrow">
+          <span class="status-dot"></span>
+          DEVELOPER PORTFOLIO
         </p>
-        <p>
-          Based in JAYz City, Country. Currently JAYz current
-          status, such as student, developer, or designer.
+
+        <h1 id="hero-title">
+          Hi, I'm <span class="accent-text">JAYz.</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Developer in progress. Problem solver by nature.
         </p>
-      </section>
 
-      <section class="card" id="skills" aria-labelledby="skills-heading">
-        <h2 id="skills-heading">Skills</h2>
-        <ul class="skills-list">
-          <li>Python</li>
-          <li>UI/UX Design</li>
-          <li>JavaScript</li>
-          <li>HTML</li>
-          <li>CSS</li>
-        </ul>
-      </section>
+        <p class="hero-description">
+          I build practical digital solutions through programming,
+          web development, and thoughtful design. I'm passionate
+          about learning by building and turning ideas into
+          functional, user-friendly projects.
+        </p>
 
-      <section class="card" id="projects" aria-labelledby="projects-heading">
-        <h2 id="projects-heading">Projects</h2>
-        <ul class="projects-list">
-          <li>
-            <a href="https://github.com/Jay-z007/python_basics_25bcon0692_fibionacci">Fibionacci Series</a>
-            <p>Fibionacci Series is a sequence of numbers where each number is the sum of the two preceding ones, starting from 0 and 1.</p>
-          </li>
-          <li>
-            <a href="https://github.com/Jay-z007/python-basics-25bcon0692-factorial">Factorial</a>
-            <p>Factorial is a function that calculates the factorial of a number.</p>
-          </li>
-          <li>
-            <a href="https://github.com/Jay-z007/python_basics_25bcon0692_struct_to_dict">Struct to Dict</a>
-            <p>Struct to Dict is a function that converts a struct to a dictionary.</p>
-          </li>
-          <li>
-            <a href="https://github.com/Jay-z007/readinglist2">Reading List</a>
-            <p>Reading List is a list of books that I have read.</p>
-          </li>
-          <li>
-            <a href="https://github.com/Jay-z007/quiz">Quiz Game</a>
-            <p>Quiz Game is a game that tests your knowledge of a subject.</p>
-          </li>
-          <li>
-            <a href="https://github.com/Jay-z007/messy">Messy </a>
-            <p>Messy is a website that helps you calculate your marks.</p>
-          </li>
-          <li>
-            <a href="https://github.com/Jay-z007/bug_fixing">Bug Fixing</a>
-            <p>Bug Fixing is a project that fixes bugs in a code.</p>
-          </li>
-        </ul>
-      </section>
-    </main>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#projects">
+            Explore my projects <span aria-hidden="true">↗</span>
+          </a>
 
-    <footer class="site-footer">
-      <p>© JAYz Year JAYz</p>
-    </footer>
-    <button id="themeToggle">Switch to Dark Mode</button>
-    <script src="script.js"></script>
-  </body>
+          <a
+            class="button button-secondary"
+            href="https://github.com/Jay-z007"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub profile
+          </a>
+        </div>
+
+        <div class="hero-tags" aria-label="Areas of interest">
+          <span>Python</span>
+          <span>Web Development</span>
+          <span>UI/UX Design</span>
+        </div>
+      </div>
+
+      <div class="profile-wrap">
+        <div class="profile-decoration decoration-one"></div>
+        <div class="profile-decoration decoration-two"></div>
+
+        <div class="profile-frame">
+          <img
+            class="profile-photo"
+            src="jayzz.jpeg"
+            alt="Portrait of JAYz"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+          >
+
+          <div class="profile-placeholder" aria-hidden="true">
+            <span>JZ</span>
+            <small>ADD YOUR PHOTO</small>
+          </div>
+        </div>
+
+        <div class="profile-caption">
+          <span class="caption-icon">✦</span>
+          Curious mind. Constant learner.
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <main class="page-content">
+
+    <section
+      class="card about-card"
+      id="about"
+      aria-labelledby="about-heading"
+    >
+      <div class="section-heading">
+        <p class="section-kicker">A LITTLE ABOUT ME</p>
+        <h2 id="about-heading">About Me</h2>
+      </div>
+
+      <div class="about-content">
+        <p>
+          Hi, I'm <strong>JAYVARDHAN</strong>, a Computer Science and
+          Engineering student at JECRC University with an interest
+          in programming, web development, and UI/UX design.
+        </p>
+
+        <p>
+          I enjoy exploring ideas, solving problems through code,
+          and turning concepts into working applications. My
+          projects range from Python programming exercises and
+          problem-solving tools to interactive games and
+          web-based applications.
+        </p>
+
+        <p>
+          I'm focused on strengthening my technical foundation,
+          improving my development skills, and learning how to
+          create digital experiences that are both functional
+          and easy to use.
+        </p>
+
+        <p>
+          I believe in learning by building, improving through
+          experimentation, and approaching every new challenge
+          with curiosity.
+        </p>
+      </div>
+
+      <div class="about-footer">
+        <div class="about-detail">
+          <span class="detail-icon" aria-hidden="true">⌘</span>
+          <div>
+            <span class="detail-label">Currently</span>
+            <strong>CSE Student</strong>
+          </div>
+        </div>
+
+        <div class="about-detail">
+          <span class="detail-icon" aria-hidden="true">↗</span>
+          <div>
+            <span class="detail-label">Find my code</span>
+            <a
+              href="https://github.com/Jay-z007"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Jay-z007 on GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="card"
+      id="skills"
+      aria-labelledby="skills-heading"
+    >
+      <div class="section-heading">
+        <p class="section-kicker">MY TOOLKIT</p>
+        <h2 id="skills-heading">Skills & Technologies</h2>
+        <p class="section-description">
+          Technologies and disciplines I'm developing through
+          learning and hands-on projects.
+        </p>
+      </div>
+
+      <div class="skills-grid">
+        <article class="skill-item">
+          <span class="skill-icon" aria-hidden="true">Py</span>
+          <h3>Python</h3>
+          <p>Programming fundamentals and problem-solving</p>
+        </article>
+
+        <article class="skill-item">
+          <span class="skill-icon" aria-hidden="true">JS</span>
+          <h3>JavaScript</h3>
+          <p>Interactive web functionality</p>
+        </article>
+
+        <article class="skill-item">
+          <span class="skill-icon" aria-hidden="true">H5</span>
+          <h3>HTML</h3>
+          <p>Semantic website structure</p>
+        </article>
+
+        <article class="skill-item">
+          <span class="skill-icon" aria-hidden="true">#</span>
+          <h3>CSS</h3>
+          <p>Responsive layouts and visual styling</p>
+        </article>
+
+        <article class="skill-item">
+          <span class="skill-icon" aria-hidden="true">✳</span>
+          <h3>UI/UX Design</h3>
+          <p>Usability and user-centered interfaces</p>
+        </article>
+      </div>
+    </section>
+
+    <section
+      class="card"
+      id="projects"
+      aria-labelledby="projects-heading"
+    >
+      <div class="section-heading">
+        <p class="section-kicker">WHAT I'VE BUILT</p>
+        <h2 id="projects-heading">Featured Projects</h2>
+        <p class="section-description">
+          A selection of projects that reflect my learning,
+          coding practice, and interest in building useful tools.
+        </p>
+      </div>
+
+      <div class="projects-grid">
+
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-number">01</span>
+            <span class="project-category">Python</span>
+          </div>
+          <h3>Fibonacci Series</h3>
+          <p>
+            Generates the Fibonacci sequence, where each number
+            is the sum of the two preceding numbers, starting
+            from zero and one.
+          </p>
+          <a
+            class="project-link"
+            href="https://github.com/Jay-z007/python_basics_25bcon0692_fibionacci"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View repository <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-number">02</span>
+            <span class="project-category">Python</span>
+          </div>
+          <h3>Factorial</h3>
+          <p>
+            A programming project focused on calculating
+            the factorial of a given number.
+          </p>
+          <a
+            class="project-link"
+            href="https://github.com/Jay-z007/python-basics-25bcon0692-factorial"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View repository <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-number">03</span>
+            <span class="project-category">Python</span>
+          </div>
+          <h3>Struct to Dict</h3>
+          <p>
+            A project focused on converting a struct into
+            a dictionary.
+          </p>
+          <a
+            class="project-link"
+            href="https://github.com/Jay-z007/python_basics_25bcon0692_struct_to_dict"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View repository <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-number">04</span>
+            <span class="project-category">Web / Data</span>
+          </div>
+          <h3>Reading List</h3>
+          <p>
+            A project for maintaining a list of books
+            that I've read.
+          </p>
+          <a
+            class="project-link"
+            href="https://github.com/Jay-z007/readinglist2"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View repository <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-number">05</span>
+            <span class="project-category">Game</span>
+          </div>
+          <h3>Quiz Game</h3>
+          <p>
+            An interactive game that tests the user's
+            knowledge of a subject.
+          </p>
+          <a
+            class="project-link"
+            href="https://github.com/Jay-z007/quiz"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View repository <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-number">06</span>
+            <span class="project-category">Web Development</span>
+          </div>
+          <h3>Messy</h3>
+          <p>
+            A website designed to help users calculate
+            their marks.
+          </p>
+          <a
+            class="project-link"
+            href="https://github.com/Jay-z007/messy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View repository <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+
+        <article class="project-card">
+          <div class="project-top">
+            <span class="project-number">07</span>
+            <span class="project-category">Programming</span>
+          </div>
+          <h3>Bug Fixing</h3>
+          <p>
+            A project focused on identifying and fixing
+            bugs in code.
+          </p>
+          <a
+            class="project-link"
+            href="https://github.com/Jay-z007/bug_fixing"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View repository <span aria-hidden="true">↗</span>
+          </a>
+        </article>
+
+      </div>
+
+      <div class="projects-footer">
+        <a
+          class="button button-secondary"
+          href="https://github.com/Jay-z007"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Explore all repositories ↗
+        </a>
+      </div>
+    </section>
+
+    <section class="contact-banner" id="contact">
+      <div>
+        <p class="section-kicker">LET'S CONNECT</p>
+        <h2>Have an idea or project in mind?</h2>
+        <p>
+          Explore my work or reach out through my GitHub profile.
+        </p>
+      </div>
+
+      <a
+        class="button button-primary"
+        href="https://github.com/Jay-z007"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Connect on GitHub ↗
+      </a>
+    </section>
+
+  </main>
+
+  <section
+    id="portfolio-chatbot"
+    class="chatbot-section"
+    aria-labelledby="chatbot-heading"
+  >
+    <div class="chatbot-heading">
+      <p class="section-kicker">PORTFOLIO AI</p>
+      <h2 id="chatbot-heading">Ask My Portfolio</h2>
+      <p>
+        Curious about my skills or projects? Ask my AI assistant.
+      </p>
+    </div>
+
+    <div
+      id="chatMessages"
+      class="chat-messages"
+      aria-live="polite"
+      aria-label="Chat conversation"
+    >
+      <p class="bot-message">
+        Hi! I'm JAYz's portfolio assistant. Ask me about the
+        projects, skills, or information listed on this page.
+      </p>
+    </div>
+
+    <form id="chatForm" class="chat-form">
+      <label class="sr-only" for="chatInput">
+        Your question
+      </label>
+
+      <input
+        id="chatInput"
+        type="text"
+        placeholder="Ask about my projects or skills..."
+        autocomplete="off"
+        required
+      >
+
+      <button id="chatSend" type="submit">Send ↗</button>
+    </form>
+
+    <p id="chatStatus" class="chat-status" aria-live="polite"></p>
+  </section>
+
+  <footer class="site-footer">
+    <a class="brand footer-brand" href="#home">JAY<span>z</span>.</a>
+    <p>Designed and built by JAYz.</p>
+    <p>© 2026 JAYz. All rights reserved.</p>
+    <a href="#home" class="back-to-top">Back to top ↑</a>
+  </footer>
+
+  <!-- Load configuration before the chatbot script. -->
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+  <script src="chatbot.js"></script>
+</body>
 </html>
